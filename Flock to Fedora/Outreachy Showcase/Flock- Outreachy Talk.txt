@@ -1,0 +1,65 @@
+﻿Outreachy Project Presentation
+
+
+Slide 1:
+(First only the Hindi title would be visible, English title will be hidden)
+
+
+Good morning everybody (Shall change this later :3)! I am Niharika Shrivastava, an Outreachy Intern with Fedora Modularity. And this is the title of my project. I bet majority of you don’t know what this means, and the rest *still* find it uncomfortable to read. 
+
+
+(Clicks to show the English title below the Hindi one)
+
+
+Fedora Modularity Translations! That makes sense now, doesn’t it? But, a lot of people find *this* highly uncomfortable to read. And that’s why I'm working to create a python library that will provide Fedora’s users a way to view Fedora’s modular packages in their preferred language. 
+
+
+Slide 2:
+ 
+The aim of this project is to translate the existing English-only modular packages into as many languages as possible and provide them as an option to our end users. As an initial approach to this, a proof of concept was written by my mentor, Stephen, keeping v.1 of libmodulemd in mind. I am now creating this library with the existing v.2 of libmodulemd.
+
+
+The first step was to extract all of Fedora’s modular package metadata from the Koji Build System, a software that builds RPM packages for Fedora. This metadata is in the form of YAML files which can be easily loaded into  a Modulemd Index object. This is the main building block which is used to interact with libmodulemd’s API. We then extract English strings that need to be translated from this index and convert them into a Babel Catalog. This entire catalog is then sent to translation tools, such as Zanata that Fedora uses now for translation. After some magic translation from Zanata volunteers, we receive our English strings back, translated to us in various languages. These are converted into translation documents, and our original index object is modified. This essentially means that our final YAML metadata can be modified.
+
+
+Slide 3:
+
+
+For my first month, I started with Fedora 29’s entire repo data as a YAML file and converted it into an index object. My aim was to extract only the strings that would be visible to a user, and then send it to our translation tool.
+
+
+This is the hierarchy of a repo’s metadata:
+Every index contains many module objects. Every module object contains many modulestream objects. Every modulestream object contains 3 types of strings at max:
+Summary, Description, and Profile descriptions (optional).
+So I extract all of them and put them into a Babel catalog. Catalogs have a portable object file template that take in unique strings as their keys and store their locations too.
+Every stream object can be uniquely identified by their NSVCA, and so the location is essentially : module;stream:type_of_string
+I extract strings only from the latest version of module:stream pair because  it is presumed to have the most up-to-date English phrasing to translate.
+
+
+Slide 4:
+
+
+After some magic translation from Zanata, we get back our strings, now in various languages. These strings are then converted into a Translation Entry object. That is, one translation entry object shall contain the  translations of one module:stream pair. Hence, we shall have different translation entry objects for Spanish and French. All these objects are made into a single Translation document and finally added into our original index object.
+And it was all possible to trace back to our original locations using the NSVCA!
+
+
+Slide 5:
+
+
+Now that we had this library in a working state, we could treat this a black box and try it on actual metadata, pulled fresh from Koji. I’m currently working on this and hopefully all shall work out well! We shall be shipping this as a separate library from libmodulemd’s sources.
+As a stretch goal, we shall use Pungi to inject this modified index object into Fedora’s repo creation.
+
+
+Slide 6:
+(Blank screen initially)
+  
+Outreachy has been my first internship ever and I absolutely loved every bit of it. From frequent blog posts, to daily sessions with my mentor, to me standing here in front of all of you giving my first talk ever, everything is absolutely priceless!  I have to admit, by the end of my first successful feedback, I literally felt like this:
+
+
+(Shows GIF)
+
+
+Slide 7:
+
+
+THANK YOU!
